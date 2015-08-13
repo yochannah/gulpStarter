@@ -1,0 +1,283 @@
+@import '_loader';
+@import '_clearfix';
+
+@cySize : 350px;
+@borderRadius : 4px;
+
+@primaryColor : #eee;                   //grey
+@primaryColorDark : darken(@primaryColor,15%); //Darker grey
+@secondaryColor : #2c79be;              //blue
+@secondaryColorDark : darken(@secondaryColor, 15%);              //blue
+@highlightColor : #ec971f;              //yellow
+
+@deemphasisedTextColor: #666;
+
+@geneticColor : #225f95;                //blue
+@physicalColor : #c00;                  //red
+@bothPhysicalAndGeneticColor : #77304B; //purple
+
+body {
+  font-family : arial, sans-serif;
+}
+
+.cymine {
+  display:flex;
+  background-color:#f0f0f0;
+  flex-wrap : wrap;
+
+  .module {
+    background-color:white;
+    min-width:@cySize;
+    min-height:@cySize;
+    flex-direction:row;
+    margin:1em;
+    border-radius:4px;
+    flex-grow:1;
+    flex-direction:column;
+    justify-content : center;
+    align-items: center;
+    box-sizing:border-box;
+  }
+
+  .graph, .nodeDetails {
+    .module;
+    font-size:0.9em;
+
+  }
+
+  .nodeTitle {
+    margin:0.2em;
+  }
+
+  //without a height and a width, cytoscape doesn't display properly.
+
+  .cy {
+  //  border:solid 1px seagreen; //this line is useful for debugging
+    width:@cySize;
+    height:@cySize;
+    margin:auto;
+  }
+
+  dt, dd {
+    float:left;
+    margin-left:0.5em;
+    margin-top:0.1em;
+    text-transform:capitalize;
+  }
+
+  dl {
+    &.intro {border:0;}
+    .cf;
+    margin:0;
+    clear:left;
+    width:100%;
+    float:left;
+  }
+
+  dt {
+    &:after {
+      content: ": ";
+      text-align:center;
+    }
+    &.intro {
+      text-transform:none;
+      &:after {content: ""}
+      box-sizing:border-box;
+      font-weight:normal;
+      color:@deemphasisedTextColor;
+      line-height:@cySize;
+      text-align:center;
+      width:100%;
+    }
+    font-weight:bold;
+    float:left;
+    clear:left
+    }
+
+    //styles interaction details each in their own box
+  .details > dl > dt {
+    @borderStyle: solid 1px @primaryColorDark;
+    background-color:@primaryColor;
+    width:100%;
+    padding: 0.3em;
+    box-sizing:border-box;
+    border-top:@borderStyle;
+    border-left:@borderStyle;
+    border-right:@borderStyle;
+    margin-bottom:0;
+    border-top-left-radius: @borderRadius;
+    border-top-right-radius: @borderRadius;
+    &+dd {
+      &.child > dl {
+        .child {
+          border-left:solid 3px #ddd;
+        }
+      }
+      box-sizing:border-box;
+      margin-top:0;
+      width:100%;
+      border-bottom:@borderStyle;
+      border-left:@borderStyle;
+      border-right:@borderStyle;
+      border-bottom-left-radius: @borderRadius;
+      border-bottom-right-radius: @borderRadius;
+      padding-bottom:0.2em;
+    }
+  }
+
+  dd.child {
+    clear:left;
+  }
+
+  .status {
+    text-align:center;
+    &.no-results {
+      .module;
+      background-color:#fff;
+      line-height: @cySize;
+    }
+  }
+
+  .controls {
+    padding : 1em;
+    margin:auto;
+    div {text-align:center;}
+
+    button {
+      background-color:@primaryColor;
+      border:0;
+      border-bottom:solid 3px #fff;
+      padding:0.5em 1.5em;
+      color: #000;
+      margin:0;
+      transition: border 1s ease;
+      position: relative;
+
+      &:before {
+        content:"";
+        width:15px;
+        height:15px;
+        margin-right:0.5em;
+        display:block;
+        float:left;
+        opacity:0.4;
+      }
+
+      &.selected:before {
+        opacity:1;
+      }
+
+      &.genetic:before {
+        background-color:@geneticColor;
+      }
+
+      &.default:before {
+        background-color:@bothPhysicalAndGeneticColor;
+        border-radius:5px;
+      }
+
+      &.physical:before {
+        background-color:@physicalColor;
+        border-radius:30px;
+      }
+
+      &:after{
+        display: block;
+        position: absolute;
+        left: 0;
+        bottom: -3px;
+        width: 0;
+        height: 3px;
+        background-color: @highlightColor;
+        content: "";
+        transition: width 0.2s;
+      }
+
+      &:hover {
+        &:after {
+          width: 100%;
+        }
+      }
+
+      &.selected {
+        transition: border 1s ease;
+        border-bottom:solid 3px @secondaryColor;
+      }
+
+      &:first-child {
+        -webkit-border-top-left-radius: 4px;
+        -webkit-border-bottom-left-radius: 4px;
+        -moz-border-radius-topleft: 4px;
+        -moz-border-radius-bottomleft: 4px;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        border-right: solid 1px darken(@primaryColor, 10%);
+        margin:0;
+      }
+      &:last-child {
+        margin:0;
+        border-left: solid 1px darken(@primaryColor, 10%);
+        -webkit-border-top-right-radius: 4px;
+        -webkit-border-bottom-right-radius: 4px;
+        -moz-border-radius-topright: 4px;
+        -moz-border-radius-bottomright: 4px;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
+  }
+
+  //this is a sneaky workaround that allows us to change the display: property of an item
+  //whilst also animating, which isn't possible with transitions.
+  //Thanks, http://stackoverflow.com/a/9334132/1542891
+  @keyframes fadeIn {
+      from { opacity: 0; }
+        to { opacity: 1; }
+  }
+
+  .export {
+    min-height:1em;
+    color:@deemphasisedTextColor;
+    float:right;
+    padding: 0.5em;
+    border-radius : 4px;
+    margin:0.5em;
+    width:165px;
+    text-align:center;
+    border:solid 1px #fff;
+    transition: width 1s;
+    box-sizing:border-box;
+    &:hover {
+      color:darken(@deemphasisedTextColor,20%);
+      background-color:@primaryColor;
+    }
+    .exportValues {
+      display:none;
+      background-color:#fff;
+      border-radius:2px;
+
+      button{
+        background-color:@secondaryColor;
+        color:@primaryColor;
+        border:0;
+        &:before {display:none;}
+        &:after {display:none;}
+        border-radius:@borderRadius;
+        &:hover {
+          border:0;
+          &:after {display:none;}
+          background-color:@secondaryColorDark;
+        }
+      }
+    }
+    &.active {
+      &:hover {
+        color:@deemphasisedTextColor;
+        background-color:transparent;
+      }
+      width:100%;
+      transition: width 1s, text-align 1s;
+      .exportValues {display:inline; animation: fadeIn 2s}
+    }
+  }
+}
